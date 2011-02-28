@@ -1,0 +1,77 @@
+Mongoid Roles
+=============
+
+Roles system for mongoid with interface based on [acl9](https://github.com/be9/acl9).
+
+h2. Installation
+
+Add this line to your Gemfile:
+@gem 'mongoid_roles'@
+
+h2. Subject model
+
+<pre><code>
+  class User
+    include Mongoid::Document
+    include Mongoid::Roles::Subject
+  end
+</code></pre>
+    
+
+h2. Object model
+
+<pre><code>
+    class Foo
+      include Mongoid::Document
+      include Mongoid::Roles::Object
+    end
+    
+    class Bar
+      include Mongoid::Document
+      include Mongoid::Roles::Object
+    end
+</code></pre>
+
+
+h2. Interface
+
+
+h3. Subject model
+
+A call of @include Mongoid::Roles::Subject@ defines following methods on the model:
+
+@subject.has_role?(role, object)@. Returns @true@ of @false@ (has or has not).
+
+@subject.has_role!(role, object)@. Assigns a @role@ for the @object@ to the @subject@. 
+Does nothing is subject already has such a role.
+
+@subject.has_no_role!(role, object)@. Unassigns a role from the @subject@.
+
+@subject.has_roles_for?(object)@. Does the @subject@ has any roles for @object@? (@true@ of @false@)
+
+@subject.has_role_for?(object)@. Same as @has_roles_for?@.
+
+@subject.roles_for(object)@. Returns an array of @Role@ instances, corresponding to @subject@ 's roles on
+@object@. E.g. @subject.roles_for(object).map(&:name).sort@ will give you role names in alphabetical order.
+
+@subject.has_no_roles_for!(object)@. Unassign any @subject@ 's roles for a given @object@.
+
+@subject.has_no_roles!@. Unassign all roles from @subject@.
+
+
+h3. Object model
+
+A call of @include Mongoid::Roles::Object@ defines following methods on the model:
+
+@object.accepts_role?(role_name, subject)@. An alias for @subject.has_role?(role_name, object)@.
+
+@object.accepts_role!(role_name, subject)@. An alias for @subject.has_role!(role_name, object)@.
+
+@object.accepts_no_role!(role_name, subject)@. An alias for @subject.has_no_role!(role_name, object)@.
+
+@object.accepts_roles_by?(subject)@. An alias for @subject.has_roles_for?(object)@.
+
+@object.accepts_role_by?(subject)@. Same as @accepts_roles_by?@.
+
+@object.accepts_roles_by(subject)@. An alias for @subject.roles_for(object)@.
+
