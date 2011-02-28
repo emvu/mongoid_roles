@@ -1,11 +1,14 @@
-Mongoid Roles
-=============
+h1. Mongoid Roles
 
-Roles system for mongoid with interface based on [acl9](https://github.com/be9/acl9).
+Role-based authorization system for Rails & Mongoid.
+
+Interface is based on "acl9":https://github.com/be9/acl9.
+
 
 h2. Installation
 
 Add this line to your Gemfile:
+
 @gem 'mongoid_roles'@
 
 h2. Subject model
