@@ -34,7 +34,7 @@ module Mongoid
         # find all subjects which has given role for given object
         def with_role role, object
           c = where('roles.auth_object_type' => object.class.name, 'roles.role' => role)
-          c.selector['roles.auth_object_id'] = object.id.to_s # FIX, bo chcemy string a nie objectid...
+          c.selector['roles.auth_object_id'] = object.id.to_s # FIX, we want string instead of object_id...
           return c
         end
 
@@ -42,8 +42,12 @@ module Mongoid
   
       # Assigns a role for the object to the subject. 
       # Does nothing is subject already has such a role.
-      def has_role! (role, object = nil)
-        roles.find_or_create_by(:role => role, :auth_object => object)
+      def has_role! (role, auth_object = nil)
+        # p roles.find(:role => role, :auth_object => auth_object).first
+        auth_object ?
+          roles.find_or_create_by(:role => role, :auth_object_id => auth_object.id.to_s, :auth_object_type => auth_object.class.name) :
+          roles.find_or_create_by(:role => role, :auth_object_id => nil, :auth_object_type => nil)
+          
       end
     end
   end

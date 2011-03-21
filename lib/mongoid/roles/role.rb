@@ -9,15 +9,17 @@ module Mongoid
       field :auth_object_type,  :type => String
       field :auth_object_id,    :type => String
 
-      scope :find_role_with_object, lambda{|role, object| where(:role => role, :auth_object_type => object.class.name, :auth_object_id => object.id)}
-      scope :find_object,           lambda{|object|       where(:auth_object_type => object.class.name, :auth_object_id => object.id)}
-      # validates_uniqueness_of :name
-  
+      scope :find_object, lambda  {|object| where(:auth_object_type => object.class.name, :auth_object_id => object.id)}
+      scope :find_role,   lambda  {|role, object = nil|  
+        object ?  where(:role => role, :auth_object_type => object.class.name, :auth_object_id => object.id) :
+                  where(:role => role, :auth_object_type => nil, :auth_object_id => nil)
+      }
+      
       class << self
       
         # subject.has_role?(role, object = nil). Returns true of false (has or has not).
-        def has_role? (role, object)
-          find_role_with_object(role,object).count == 1
+        def has_role? (role, object = nil)
+          find_role(role,object).count == 1
         end
        
         # subject.has_role!(role, object = nil). Assigns a role for the object to the subject. 
@@ -25,8 +27,8 @@ module Mongoid
         # IMPELEMENTED IN MongoidRoles::Subject
       
         # subject.has_no_role!(role, object = nil). Unassigns a role from the subject.
-        def has_no_role! (role, object)
-          find_role_with_object(role,object).destroy_all
+        def has_no_role! (role, object = nil)
+          find_role(role,object).destroy_all
         end
       
         # subject.has_roles_for?(object). Does the subject has any roles for object? (true of false)
@@ -55,6 +57,11 @@ module Mongoid
           criteria.destroy_all
         end
 
+        
+        
+        # def find_role(role, object = nil)
+        #   object ? find_role_with_object(role,object) : find_role(role)
+        # end
       end
   
       def auth_object
@@ -64,6 +71,8 @@ module Mongoid
       end
 
       def auth_object=(auth_object)
+        return unless auth_object
+        
         self.auth_object_type = auth_object.class.name
         self.auth_object_id   = auth_object.id
       end

@@ -43,12 +43,12 @@ h3. Subject model
 
 A call of @include Mongoid::Roles::Subject@ defines following methods on the model:
 
-@subject.has_role?(role, object)@. Returns @true@ of @false@ (has or has not).
+@subject.has_role?(role, object = nil)@. Returns @true@ of @false@ (has or has not).
 
-@subject.has_role!(role, object)@. Assigns a @role@ for the @object@ to the @subject@. 
+@subject.has_role!(role, object = nil)@. Assigns a @role@ for the @object@ to the @subject@. 
 Does nothing is subject already has such a role.
 
-@subject.has_no_role!(role, object)@. Unassigns a role from the @subject@.
+@subject.has_no_role!(role, object = nil)@. Unassigns a role from the @subject@.
 
 @subject.has_roles_for?(object)@. Does the @subject@ has any roles for @object@? (@true@ of @false@)
 
